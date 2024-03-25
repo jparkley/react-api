@@ -1,23 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useQuery } from "@tanstack/react-query";
 
 function App() {
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["albums"],
+    queryFn: () =>
+      fetch("https://jsonplaceholder.typicode.com/albums").then((res) =>
+        res.json()
+      ),
+  });
+
+  console.log("🚀 ~ App ~ data:", data);
+
+  if (isLoading) return <h1>... Loading</h1>;
+  if (error) {
+    return <pre>{JSON.stringify(error)}</pre>;
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h2>List </h2>
+      {data?.map((post) => {
+        return <div key={post.id}>{post.title}</div>;
+      })}
     </div>
   );
 }
